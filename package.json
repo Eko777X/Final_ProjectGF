@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "admin-lte": "^4.0.0-beta2",
+    "bootstrap": "^5.3.3",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "knex": "^3.1.0",
+    "pg": "^8.13.1"
+  }
+}
