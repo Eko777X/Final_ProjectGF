@@ -6,7 +6,11 @@ class UsersManagementController {
     try {
       const usersManagement = await UsersManagementModel.getAllUsersManagement();
       const roles = await RoleModel.getAllRoles(); // Mengambil data role
-      res.render('users_management/index', { usersManagement, roles });
+
+      res.render('users_management/index', { 
+        usersManagement, 
+        roles,
+        title: 'Management', });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }

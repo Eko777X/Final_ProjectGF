@@ -1,9 +1,8 @@
 const express = require('express');
 const path = require('path');
-const RolesController = require('./controllers/rolesController');
-const UsersController = require('./controllers/usersController');
-const UsersManagementController = require('./controllers/usersManagementController');
-const { appPort } = require('./config/connect'); // Ambil port dari konfigurasi
+const { appPort } = require('./config/connect');
+const routes = require('./routers');
+
 const app = express();
 
 
@@ -11,17 +10,12 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
-app.get('/roles', RolesController.getAllRoles);
-app.post('/roles', RolesController.createRole);
+// Middleware untuk menyajikan file statis dari node_modules
+app.use('/node_modules', express.static(path.join(__dirname, 'node_modules')));
 
-app.get('/users', UsersController.getAllUsers);
-app.post('/users', UsersController.createUser);
+app.use(routes);
 
-app.get('/user-management', UsersManagementController.getAllUserManagement);
-app.post('/user-management', UsersManagementController.createUserManagement);
 
-// Start the server
 app.listen(appPort, () => {
   console.log(`Server running at http://localhost:${appPort}`);
 });

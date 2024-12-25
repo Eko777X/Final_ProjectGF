@@ -1,20 +1,37 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Roles</title>
-</head>
-<body>
-  <h1>Roles</h1>
-  <ul>
-    <% roles.forEach(role => { %>
-      <li><%= role.nama_role %></li>
-    <% }) %>
-  </ul>
+<%- include('../layouts/header') %>
 
-  <form action="/roles" method="POST">
-    <label for="nama_role">Role Name:</label>
-    <input type="text" name="nama_role" required>
-    <button type="submit">Create Role</button>
-  </form>
+<body class="hold-transition sidebar-mini">
+
+  <%- include('../layouts/navbar') %>
+
+  <!-- Main Content -->
+  <div class="wrapper">
+
+    <%- include('../layouts/sidebar') %>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+      <section class="content">
+        <div class="container-fluid">
+          <h1><%= title %></h1>
+          <ul class="list-group">
+            <% roles.forEach(role => { %>
+              <li class="list-group-item"><%= role.nama_role %></li>
+            <% }) %>
+          </ul>
+
+          <!-- Form to create new role -->
+          <form action="/roles" method="POST" class="mt-4">
+            <div class="mb-3">
+              <label for="nama_role" class="form-label">Role Name:</label>
+              <input type="text" name="nama_role" id="nama_role" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Create Role</button>
+          </form>
+        </div>
+      </section>
+    </div>
+  </div>
 </body>
-</html>
+
+  <%- include('../layouts/footer') %>

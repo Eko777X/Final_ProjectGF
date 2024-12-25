@@ -27,7 +27,17 @@ const {db} = require('../config/connect');
 
 class UserManagementModel {
   static async getAllUsersManagement() {
-    return db('users_management').select('*');
+    return db('users_management')
+    .leftJoin('roles', 'users_management.id_role', 'roles.id_role')
+    .select(
+      'users_management.id_user_management',
+      'users_management.nama_user',
+      'users_management.username',
+      'users_management.email',
+      'users_management.status',
+      'roles.nama_role',
+      'users_management.id_user'
+    );
   }
 
   static async createUserManagement(nama_user, username, email, password, id_role, id_user) {
