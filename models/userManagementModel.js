@@ -40,6 +40,7 @@ class UserManagementModel {
     );
   }
 
+  
   static async createUserManagement(nama_user, username, email, password, id_role, id_user) {
     return db('users_management').insert({ nama_user, username, email, password, id_role, id_user });
   }

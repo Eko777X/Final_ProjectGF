@@ -1,28 +1,36 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Users</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register User</title>
 </head>
 <body>
-  <h1>Users</h1>
-  <ul>
-    <% users.forEach(user => { %>
-      <li><%= user.nama_user %> - <%= user.email %></li>
-    <% }) %>
-  </ul>
+  <h1>Register User</h1>
 
+  <!-- Form untuk register -->
   <form action="/user" method="POST">
     <label for="nama_user">Name:</label>
-    <input type="text" name="nama_user" required><br>
+    <input type="text" name="nama_user" id="nama_user" required><br>
+
     <label for="username">Username:</label>
-    <input type="text" name="username" required><br>
+    <input type="text" name="username" id="username" required><br>
+
     <label for="email">Email:</label>
-    <input type="email" name="email" required><br>
+    <input type="email" name="email" id="email" required><br>
+
     <label for="password">Password:</label>
-    <input type="password" name="password" required><br>
-    <label for="id_role">Role ID:</label>
-    <input type="number" name="id_role" required><br>
-    <button type="submit">Create User</button>
+    <input type="password" name="password" id="password" required><br>
+
+    <label for="id_role">Role:</label>
+    <select name="id_role" id="id_role" required>
+      <% roles.forEach(role => { %>
+        <option value="<%= role.id_role %>"><%= role.nama_role %></option>
+      <% }) %>
+    </select><br>
+
+    <button type="submit">Register</button>
   </form>
+  
 </body>
 </html>

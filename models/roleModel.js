@@ -32,4 +32,5 @@ class RoleModel {
     return db('roles').insert({ nama_role });
   }
 }
+
 module.exports = RoleModel;

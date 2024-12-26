@@ -17,3 +17,4 @@ router.get('/user-management', UsersManagementController.getAllUserManagement);
 router.post('/user-management', UsersManagementController.createUserManagement);
 
 module.exports = router;
+

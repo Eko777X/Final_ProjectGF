@@ -1,4 +1,6 @@
 // knexfile.js
+const path = require('path');
+
 module.exports = {
   development: {
     client: 'pg',  // Gunakan 'pg' untuk PostgreSQL
@@ -9,7 +11,7 @@ module.exports = {
       database: 'DbInvenParkir'
     },
     migrations: {
-      directory: './migrations'
+      directory: path.join(__dirname, '../migrations')
     },
     app: {
       port: 3000, // Tambahkan port untuk aplikasi

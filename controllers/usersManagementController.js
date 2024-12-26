@@ -1,9 +1,18 @@
 const UsersManagementModel = require('../models/userManagementModel');
 const RoleModel = require('../models/roleModel');
+const {db} = require('../config/connect');
 
 class UsersManagementController {
   static async getAllUserManagement(req, res) {
     try {
+      const tableExists = await db.schema.hasTable('users_management');
+      if (!tableExists) {
+        console.log('Tabel "users_management" tidak ada, menjalankan migrasi...');
+  
+        await db.migrate.up('202412230003_create_users_table.js'); 
+        
+        console.log('Migrasi selesai, tabel "users_management" telah dibuat.');
+      }
       const usersManagement = await UsersManagementModel.getAllUsersManagement();
       const roles = await RoleModel.getAllRoles(); // Mengambil data role
 
