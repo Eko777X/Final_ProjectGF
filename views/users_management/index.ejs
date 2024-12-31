@@ -1,5 +1,17 @@
 <%- include('../layouts/header') %>
 
+<script>
+ document.addEventListener('DOMContentLoaded', () => {
+  const token = localStorage.getItem('token');
+  console.log('Token:', token); // Debugging
+  fetch('/user-management', {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    }}
+  )});
+    </script>
+
 <body class="hold-transition sidebar-mini">
   <%- include('../layouts/navbar') %>
 

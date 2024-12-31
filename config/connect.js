@@ -25,5 +25,5 @@ try {
 
 module.exports = {
   db,
-  appPort: dbConfig.app.port,
+  appPort: dbConfig.app?.port || 3000,
 };

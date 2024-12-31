@@ -1,3 +1,5 @@
+const bcrypt = require('bcryptjs');
+
 exports.up = async function (knex) {
   // Membuat tabel users
   await knex.schema.createTable('users', function (table) {
@@ -14,14 +16,15 @@ exports.up = async function (knex) {
       .inTable('roles')
       .onDelete('CASCADE');
   });
-
+  const plainPassword = 'superadmin';
+  const hashedPassword = await bcrypt.hash(plainPassword, 10);
   const role = await knex('roles').where({ nama_role: 'super_admin' }).first();
   if (role) {
     await knex('users').insert({
       nama_user: 'super_admin',
       username: 'superadmin',
       email: 'superadmin@gmail.com',
-      password: 'superadmin',
+      password: hashedPassword,
       id_role: role.id_role,
     });
   }
