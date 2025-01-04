@@ -1,17 +1,4 @@
 <%- include('../layouts/header') %>
-
-<script>
- document.addEventListener('DOMContentLoaded', () => {
-  const token = localStorage.getItem('token');
-  console.log('Token:', token); // Debugging
-  fetch('/user-management', {
-    method: 'GET',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-    }}
-  )});
-    </script>
-
 <body class="hold-transition sidebar-mini">
   <%- include('../layouts/navbar') %>
 
@@ -42,23 +29,25 @@
             <tbody>
               <% if (usersManagement && usersManagement.length > 0) { %>
                 <% usersManagement.forEach((user, index) => { %>
-                  <tr>
-                    <td><%= index + 1 %></td>
-                    <td><%= user.nama_user %></td>
-                    <td><%= user.username %></td>
-                    <td><%= user.email %></td>
-                    <td>
-                      <span class="<%= user.status === 'active' ? 'badge bg-success' : 'badge bg-secondary' %>">
-                        <%= user.status %>
-                      </span>
-                    </td>
-                    <td><%= user.nama_role || 'N/A' %></td>
-                    <td><%= user.id_user || 'N/A' %></td>
-                    <td>
-                      <a href="/user-management/edit/<%= user.id_user_manajemen %>" class="btn btn-warning btn-sm">Edit</a>
-                      <a href="/user-management/delete/<%= user.id_user_manajemen %>" class="btn btn-danger btn-sm">Delete</a>
-                    </td>
-                  </tr>
+                  <% if (user.id_user === id_user) { %> <!-- Menambahkan filter berdasarkan id_user yang sedang login -->
+                    <tr>
+                      <td><%= index + 1 %></td>
+                      <td><%= user.nama_user %></td>
+                      <td><%= user.username %></td>
+                      <td><%= user.email %></td>
+                      <td>
+                        <span class="<%= user.status === 'active' ? 'badge bg-success' : 'badge bg-secondary' %>">
+                          <%= user.status %>
+                        </span>
+                      </td>
+                      <td><%= user.nama_role %></td>
+                      <td><%= user.id_user %></td>
+                      <td>
+                        <a href="/user-management/edit/<%= user.id_user_manajemen %>" class="btn btn-warning btn-sm">Edit</a>
+                        <a href="/user-management/delete/<%= user.id_user_manajemen %>" class="btn btn-danger btn-sm">Delete</a>
+                      </td>
+                    </tr>
+                  <% } %>
                 <% }); %>
               <% } else { %>
                 <tr>
@@ -108,10 +97,7 @@
                         <% }); %>
                       </select>
                     </div>
-                    <div class="mb-3">
-                      <label for="id_user" class="form-label">User Created By</label>
-                      <input type="text" class="form-control" id="id_user" name="id_user" required>
-                    </div>
+                    <input type="hidden" id="id_user" name="id_user" value="<%= id_user %>">
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -126,10 +112,12 @@
       </section>
     </div>
   </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const token = localStorage.getItem('token');
+      console.log('Token:', token); // Debugging
+    });
+  </script>
 </body>
 
-
-  <%- include('../layouts/footer') %>
-
-
-  
+<%- include('../layouts/footer') %>

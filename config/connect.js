@@ -16,11 +16,11 @@ try {
     })
     .catch((err) => {
       console.error('Gagal menyambung ke database:', err.message);
-      process.exit(1); // Keluar dari proses jika koneksi gagal
+      // process.exit(1); // Keluar dari proses jika koneksi gagal
     });
 } catch (err) {
   console.error('Kesalahan saat inisialisasi database:', err.message);
-  process.exit(1); // Keluar dari proses jika konfigurasi bermasalah
+  // process.exit(1); // Keluar dari proses jika konfigurasi bermasalah
 }
 
 module.exports = {

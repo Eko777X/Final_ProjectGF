@@ -4,8 +4,13 @@ const { appPort } = require('./config/connect');
 const routes = require('./routers');
 const authRoutes = require('./routers/auth');
 const cookieParser = require("cookie-parser");
-
+const { initDatabase } = require('./middleware/init');
 const app = express();
+
+(async () => {
+  try {
+    // Inisialisasi database
+    await initDatabase();
 
 app.use(express.json());
 
@@ -20,10 +25,14 @@ app.use('/auth', authRoutes);
 app.use(routes);
 
 app.get('/', (req, res) => {
-  res.render('login'); // Pastikan login.ejs ada di folder views
+  res.render('index'); // Pastikan login.ejs ada di folder views
 });
 
 app.listen(appPort, () => {
   console.log(`Server running at http://localhost:${appPort}`);
 });
-
+} catch (err) {
+  console.error('Failed to initialize the database:', err);
+  process.exit(1);
+}
+})();

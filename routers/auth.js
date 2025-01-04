@@ -9,7 +9,10 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const router = express.Router();
 
 
-// Login Route
+router.get('/login', (req, res) => {
+  res.render('login');
+});
+
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
@@ -20,11 +23,15 @@ router.post('/login', async (req, res) => {
 
   try {
     // Cari pengguna berdasarkan username
-    const user = await db('users').where({ username }).first();
+    const [usersTable, usersManagementTable] = await Promise.all([
+      db('users').where({ username }).first(), 
+      db('users_management').where({ username }).first(),
+    ]);
 
-    if (!user) {
-      return res.status(401).json({ message: 'Invalid username or password.' });
+    if (!usersTable && !usersManagementTable) {
+      return res.status(401).json({ message: 'Username not existing' });
     }
+    const user = usersTable || usersManagementTable;
 
     // Verifikasi password
     const isMatch = await bcrypt.compare(password, user.password);
@@ -35,7 +42,7 @@ router.post('/login', async (req, res) => {
     // Buat token JWT
     const token = jwt.sign(
       {
-        id: user.id,
+        id: user.id_user,
         username: user.username,
         role: user.id_role, // Sertakan role dalam token
       },

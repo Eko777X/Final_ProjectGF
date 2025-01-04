@@ -29,7 +29,7 @@ class UsersController {
       const tableExists = await db.schema.hasTable('users');
       if (!tableExists) {
         console.log('Tabel "users" tidak ada, menjalankan migrasi...');
-        await db.migrate.latest();
+        await db.migrate.up('202412230002_create_users_table.js');
         console.log('Migrasi selesai, tabel "users" telah dibuat.');
       }
 
@@ -52,11 +52,17 @@ class UsersController {
         return res.status(400).json({ message: 'All fields are required.' });
       }
 
-      // Periksa apakah username sudah digunakan
-      const existingUser = await db('users').where({ username }).first();
-      if (existingUser) {
-        return res.status(400).json({ message: 'Username already exists.' });
+     // Periksa apakah username sudah digunakan di dua tabel
+      const [usersTable, usersManagementTable] = await Promise.all([
+        db('users').where({ username }).first(),
+        db('users_management').where({ username }).first(),
+      ]);
+
+      if (usersTable || usersManagementTable) {
+        return res.status(400).json({ message: 'Username already exists' });
       }
+
+      // Lanjutkan proses jika username belum digunakan
 
       // Enkripsi password
       const hashedPassword = await bcrypt.hash(password, 10);
@@ -129,7 +135,7 @@ class UsersController {
       // Hapus pengguna dari array sementara
       unverifiedUsers.splice(unverifiedUsers.indexOf(user), 1);
 
-      res.send('<h1>Email verified successfully! Your account has been created.</h1>');
+      res.render('EmailVerified');
     } catch (error) {
       console.error('Error verifying email:', error);
       res.status(400).json({ message: 'Invalid or expired token.' });

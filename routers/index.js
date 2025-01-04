@@ -31,9 +31,8 @@ router.get(
     '/user-management',
     authMiddleware.authenticate, // Middleware autentikasi
     authMiddleware.authorizeRole([2]), // Role 2 bisa mengakses
-    UsersManagementController.getAllUserManagement,(req, res) => {
-    res.render('user-management', { user: req.user });
-  });
+    UsersManagementController.getAllUserManagement
+  );
   router.post(
     '/user-management',
     authMiddleware.authenticate,

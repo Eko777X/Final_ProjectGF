@@ -1,6 +1,6 @@
 const UsersManagementModel = require('../models/userManagementModel');
-const RoleModel = require('../models/roleModel');
 const {db} = require('../config/connect');
+const bcrypt = require('bcryptjs');
 
 class UsersManagementController {
   static async getAllUserManagement(req, res) {
@@ -14,12 +14,13 @@ class UsersManagementController {
         console.log('Migrasi selesai, tabel "users_management" telah dibuat.');
       }
       const usersManagement = await UsersManagementModel.getAllUsersManagement();
-      const roles = await RoleModel.getAllRoles(); // Mengambil data role
-
+      const roles = await UsersManagementModel.getRolesExcept();
+      const id_user = req.user?.id;
       res.render('users_management/index', { 
         usersManagement, 
+        id_user,
         roles,
-        title: 'Management', });
+        title: 'Staff Management', });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
@@ -27,8 +28,19 @@ class UsersManagementController {
 
   static async createUserManagement(req, res) {
     try {
+
       const { nama_user, username, email, password, id_role, id_user } = req.body;
-      await UsersManagementModel.createUserManagement(nama_user, username, email, password, id_role, id_user);
+      const [usersTable, usersManagementTable] = await Promise.all([
+        db('users').where({ username }).first(),
+        db('users_management').where({ username }).first(),
+      ]);
+
+      if (usersTable || usersManagementTable) {
+        return res.status(400).json({ message: 'Username already exists' });
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+      await UsersManagementModel.createUserManagement(nama_user, username, email, hashedPassword, id_role, id_user);
       res.redirect('/user-management');
     } catch (error) {
       res.status(500).json({ message: error.message });

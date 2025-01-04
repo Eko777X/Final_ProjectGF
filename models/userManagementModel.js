@@ -39,7 +39,9 @@ class UserManagementModel {
       'users_management.id_user'
     );
   }
-
+  static async getRolesExcept(excludedRoles = [1, 2, 3]) {
+    return db('roles').whereNotIn('id_role', excludedRoles);
+  }
   
   static async createUserManagement(nama_user, username, email, password, id_role, id_user) {
     return db('users_management').insert({ nama_user, username, email, password, id_role, id_user });
