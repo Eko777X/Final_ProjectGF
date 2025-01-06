@@ -26,30 +26,35 @@ class UsersController {
   // Mendapatkan semua pengguna
   static async getAllUsers(req, res) {
     try {
-      const tableExists = await db.schema.hasTable('users');
-      if (!tableExists) {
-        console.log('Tabel "users" tidak ada, menjalankan migrasi...');
-        await db.migrate.up('202412230002_create_users_table.js');
-        console.log('Migrasi selesai, tabel "users" telah dibuat.');
-      }
-
-      const users = await UserModel.getAllUsers();
-      const roles = await UserModel.getRolesExceptSuperAdmin();
-      res.render('register', { users, roles });
+      const roles = await UserModel.getRolesOnly();
+      res.render('register', { 
+        roles,
+        title : 'Register',
+       });
     } catch (error) {
       console.error('Error fetching users:', error);
-      res.status(500).json({ message: 'Error fetching users.' });
+      const roles = await UserModel.getRolesOnly();
+        res.status(500);
+        return res.render('register',{ 
+        roles,
+        error: 'Error fetching users.',
+        title : 'Register', });
+      }
     }
-  }
 
   // Membuat pengguna baru
   static async createUser(req, res) {
     try {
       const { nama_user, username, email, password, id_role } = req.body;
-
+      
       // Validasi input
       if (!nama_user || !username || !email || !password || !id_role) {
-        return res.status(400).json({ message: 'All fields are required.' });
+        const roles = await UserModel.getRolesOnly();
+        res.status(400);
+        return res.render('register',{ 
+          roles,
+          error: 'All fields are required.',
+          title : 'Register', });
       }
 
      // Periksa apakah username sudah digunakan di dua tabel
@@ -59,7 +64,11 @@ class UsersController {
       ]);
 
       if (usersTable || usersManagementTable) {
-        return res.status(400).json({ message: 'Username already exists' });
+        const roles = await UserModel.getRolesOnly();
+        return res.render('register',{ 
+          roles,
+          error: 'Username already exists',
+          title : 'Register',});
       }
 
       // Lanjutkan proses jika username belum digunakan
@@ -91,15 +100,19 @@ class UsersController {
 
       transporter.sendMail(mailOptions, (err, info) => {
         if (err) {
-          console.error('Error sending email:', err);
-          return res.status(500).json({ message: 'Failed to send verification email' });
+          console.error('Failed to send verification email', err);
+          res.status(err.status || 500 );
+          return res.render('error', { 
+          error: err
+           });
         }
         console.log('Verification email sent:', info.response);
         res.status(201).json({ message: 'User registered successfully. Verification email sent.' });
       });
     } catch (error) {
       console.error('Error creating user:', error);
-      res.status(500).json({ message: 'Error creating user.' });
+      res.status(error.status || 500);
+      return res.render('error', {error});
     }
   }
 
@@ -109,7 +122,9 @@ class UsersController {
       const { token } = req.query;
 
       if (!token) {
-        return res.status(400).json({ message: 'Token is required.' });
+        console.error('Token is required.', error);
+        res.status(error.status || 400);
+        return res.render('error', { error });
       }
 
       // Verifikasi token
@@ -117,7 +132,9 @@ class UsersController {
       const user = unverifiedUsers.find(user => user.email === decoded.email);  // Cari pengguna di array sementara
 
       if (!user) {
-        return res.status(404).json({ message: 'User not found or already verified.' });
+        console.error('User not found or already verified:', error);
+        res.status(error.status || 404);
+        return res.render('error', { error });
       }
 
       // Tandai pengguna sebagai terverifikasi
@@ -135,10 +152,11 @@ class UsersController {
       // Hapus pengguna dari array sementara
       unverifiedUsers.splice(unverifiedUsers.indexOf(user), 1);
 
-      res.render('EmailVerified');
+      res.render('emailVerified',{title : 'Email Verified'});
     } catch (error) {
       console.error('Error verifying email:', error);
-      res.status(400).json({ message: 'Invalid or expired token.' });
+      res.status(error.status || 500);
+      res.render('error', { error });
     }
   }
 }

@@ -1,23 +1,93 @@
-<!-- Main Sidebar Container (optional) -->
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
-    <!-- Sidebar Menu -->
-    <div class="sidebar">
-      <nav class="mt-2">
-        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-          <li class="nav-item">
-            <a href="/" class="nav-link">
-              <i class="nav-icon fas fa-home"></i>
-              <p>Dashboard</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="/roles" class="nav-link">
-              <i class="nav-icon fas fa-user-tag"></i>
-              <p>Roles</p>
-            </a>
-          </li>
-          <!-- Add more sidebar items as needed -->
-        </ul>
-      </nav>
+  <div class="sidebar">
+    <!-- User Profile Section -->
+    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+      <div class="image">
+        <img src="<%= profile_image ? '/uploads/' + profile_image : '/uploads/default.jpg' %>" class="img-circle elevation-2" alt="User Image" />
+      </div>
+      <div class="info">
+        <!-- Display user name (This could be dynamic based on the logged-in user) -->
+        <a href="#" class="d-block" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+          <p><%= name %></p>
+        </a>
+      </div>
     </div>
-  </aside>
+
+    <!-- Sidebar Navigation -->
+    <nav class="mt-2">
+      <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+        <!-- Dashboard -->
+        <li class="nav-item">
+          <a href="admin-dashboard" class="nav-link">
+            <i class="nav-icon fas fa-home"></i>
+            <p>Dashboard</p>
+          </a>
+        </li>
+
+        <!-- Roles -->
+        <li class="nav-item">
+          <a href="/roles" class="nav-link">
+            <i class="nav-icon fas fa-user-tag"></i>
+            <p>Roles</p>
+          </a>
+        </li>
+
+        <!-- Edit Profile -->
+        <li class="nav-item">
+          <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+            <i class="nav-icon fas fa-user-edit"></i>
+            <p>Edit Profile</p>
+          </a>
+        </li>
+
+        <!-- Log Out -->
+        <li class="nav-item">
+          <a href="/logout" class="nav-link">
+            <i class="nav-icon fas fa-sign-out-alt"></i>
+            <p>Log Out</p>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</aside>
+
+<!-- Modal Edit Profile -->
+<div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Form to Edit Profile -->
+        <form action="/edit-profile" method="POST" enctype="multipart/form-data">
+          <!-- Name -->
+          <div class="form-group">
+            <label for="nama_user">Name</label>
+            <input type="text" class="form-control" id="nama_user" name="nama_user" value="<%= name %>" required>
+          </div>
+
+          <!-- Password -->
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" id="password" name="password" placeholder="Leave blank to keep current password">
+          </div>
+
+          <!-- Profile Image -->
+          <div class="form-group">
+            <label for="profile_image">Profile Image</label><br>
+            <input type="file" class="form-control" id="profile_image" name="profile_image">
+          </div>
+
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Include Bootstrap and jQuery for Modal functionality -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>

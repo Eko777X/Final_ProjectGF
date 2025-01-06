@@ -30,8 +30,8 @@ class UserModel {
     return db('users').select('*');
   }
 
-  static async getRolesExceptSuperAdmin() {
-    return db('roles').whereNot('id_role', 1);
+  static async getRolesOnly() {
+    return db('roles').whereIn('id_role', [2,3]);
   }
 
   static async createUser(nama_user, username, email, password, id_role) {

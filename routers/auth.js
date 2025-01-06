@@ -10,7 +10,7 @@ const router = express.Router();
 
 
 router.get('/login', (req, res) => {
-  res.render('login');
+  res.render('login',{title : 'Login Page'});
 });
 
 router.post('/login', async (req, res) => {
@@ -18,7 +18,9 @@ router.post('/login', async (req, res) => {
 
   // Validasi input
   if (!username || !password) {
-    return res.status(400).json({ message: 'Username and password are required.' });
+    return res.render('login', { 
+      error: 'Usernameand Password required',
+      title : 'Login Page'});
   }
 
   try {
@@ -29,14 +31,20 @@ router.post('/login', async (req, res) => {
     ]);
 
     if (!usersTable && !usersManagementTable) {
-      return res.status(401).json({ message: 'Username not existing' });
+      return res.render('login', { 
+        error: 'Username not existing',
+        title : 'Login Page'
+       });
     }
     const user = usersTable || usersManagementTable;
 
     // Verifikasi password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid username or password.' });
+      return res.render('login', { 
+        error: 'Invalid username or password!',
+        title : 'Login Page'
+       });
     }
 
     // Buat token JWT
@@ -44,7 +52,10 @@ router.post('/login', async (req, res) => {
       {
         id: user.id_user,
         username: user.username,
-        role: user.id_role, // Sertakan role dalam token
+        role: user.id_role,
+        name: user.nama_user,
+        profile_image: user.profile_image
+
       },
       JWT_SECRET,
       { expiresIn: '1h' } // Token berlaku selama 1 jam
@@ -52,11 +63,16 @@ router.post('/login', async (req, res) => {
 
     res.cookie("token", token, { httpOnly: true, maxAge: 3600000 });
     if (user.id_role === 1) {
-      res.redirect('/roles');
-    } else if (user.id_role === 2) {
+      res.redirect('/admin-dashboard');
+    } else if ([2, 3].includes(user.id_role)) {
       res.redirect('/user-management');
     } else {
-      res.status(403).json({ message: 'Access denied: Invalid role.' });
+      console.error('Invalid Role');
+      res.status(403);
+      return res.render('login', { 
+        error: 'Access Denied',
+        title : 'Login Page'
+       });
     }
     
   } catch (error) {

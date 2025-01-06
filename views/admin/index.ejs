@@ -1,0 +1,62 @@
+<%- include('../layouts/header') %>
+
+<body class="hold-transition sidebar-mini">
+
+  <%- include('../layouts/navbar') %>
+
+  <!-- Main Content -->
+  <div class="wrapper">
+
+    <%- include('../layouts/sidebar') %>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+      <section class="content">
+        <div class="container-fluid">
+          <h1><%= title %></h1>
+
+          <!-- Display User Data -->
+          <h3 class="mt-4">Users</h3>
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Role</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% users.forEach((user, index) => { %>
+                <!-- Baris data utama dari tabel users -->
+                <tr>
+                  <td><%= index + 1 %></td>
+                  <td><%= user.nama_user %></td>
+                  <td><%= user.username %></td>
+                  <td><%= user.email %></td>
+                  <td><%= user.status %></td>
+                  <td><%= user.id_role %></td>
+                </tr>
+                <!-- Baris tambahan untuk tabel users_management -->
+                <tr>
+                  <td colspan="6" class="bg-light">
+                    <strong>Management Details:</strong><br>
+                    Name: <%= user.management_name || 'N/A' %><br>
+                    Email: <%= user.management_email || 'N/A' %><br>
+                    Role: <%= user.management_role || 'N/A' %><br>
+                    Status: <%= user.management_status || 'N/A' %>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+            
+          </table>
+        </div>
+      </section>
+    </div>
+  </div>
+</body>
+
+<%- include('../layouts/footer') %>

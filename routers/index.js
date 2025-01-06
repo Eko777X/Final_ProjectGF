@@ -4,8 +4,35 @@ const RolesController = require('../controllers/rolesController');
 const UsersController = require('../controllers/usersController');
 const UsersManagementController = require('../controllers/usersManagementController');
 const authMiddleware = require('../middleware/validate');
+const dashboardController = require('../controllers/dashboardController');
+const multer = require('multer');
+const path = require('path');
 
 
+// Konfigurasi Multer untuk unggahan file
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, '../public/uploads'));
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = `${Date.now()}-${file.originalname}`;
+    cb(null, uniqueSuffix);
+  },
+});
+
+const upload = multer({ storage });
+
+// Routes for edit profile
+router.post('/edit-profile', 
+  authMiddleware.authenticate,
+  upload.single('profile_image'),
+  dashboardController.updateProfile);
+
+// Routes for access
+router.get('/admin-dashboard',
+   authMiddleware.authenticate, // Middleware autentikasi
+   authMiddleware.authorizeRole([1]), // Hanya admin yang bisa mengakses
+   dashboardController.adminDashboard);
 
 // Routes for roles
 router.get(
@@ -29,16 +56,22 @@ router.get('/verify-email', UsersController.verifyEmail);
 // Routes for user management
 router.get(
     '/user-management',
-    authMiddleware.authenticate, // Middleware autentikasi
-    authMiddleware.authorizeRole([2]), // Role 2 bisa mengakses
+    authMiddleware.authenticate,
+    authMiddleware.authorizeRole([2,3]),
     UsersManagementController.getAllUserManagement
   );
   router.post(
     '/user-management',
     authMiddleware.authenticate,
-    authMiddleware.authorizeRole([2]),
+    authMiddleware.authorizeRole([2,3]),
     UsersManagementController.createUserManagement
   );
+  // Routes for logout
+  router.get("/logout", (req, res) => {
+    res.clearCookie("token"); // Hapus cookie 'token'
+    res.redirect("/auth/login");  // Redirect ke halaman login
+  });
+  
 
 module.exports = router;
 

@@ -23,6 +23,7 @@ app.use('/node_modules', express.static(path.join(__dirname, 'node_modules')));
 app.use(cookieParser());
 app.use('/auth', authRoutes);
 app.use(routes);
+app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 
 app.get('/', (req, res) => {
   res.render('index'); // Pastikan login.ejs ada di folder views
