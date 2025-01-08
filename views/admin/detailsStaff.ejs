@@ -1,0 +1,84 @@
+<%- include('../layouts/header') %>
+
+<body class="hold-transition sidebar-mini">
+  <%- include('../layouts/navbar') %>
+
+  <!-- Main Wrapper -->
+  <div class="wrapper d-flex flex-column min-vh-100">
+    <!-- Main Content -->
+    <section class="content py-4 flex-grow-1">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header">
+                <h5>Management Details</h5>
+              </div>
+              <div class="card-body">
+                <% if (Array.isArray(users) && users.length > 0) { %>
+                  <% users.forEach(user => { %>
+                    <div class="card mb-3">
+                      <div class="card-body">
+                        <h5 class="card-title"><%= user.management_name || 'N/A' %></h5>
+                        <p class="card-text">
+                          <strong>Management Email:</strong> <%= user.management_email || 'N/A' %><br>
+                          <strong>Management Position:</strong> <%= user.staffRole_name || 'N/A' %><br>
+                         
+                          <!-- Edit Status Button -->
+                      <button
+                      class="btn btn-sm btn-outline-primary"
+                      data-bs-toggle="modal"
+                      data-bs-target="#editStatusModal<%= user.management_id %>"
+                    >
+                      Edit Status
+                    </button>
+                  <% if (user.management_status === 'active') { %>
+                    <span class="badge bg-success">Active</span>
+                  <% } else { %>
+                    <span class="badge bg-danger">Blocked</span>
+                  <% } %>
+                        </p>
+                      </div>
+                    </div>
+                  <% }) %>
+                <% } else { %>
+                  <p>No management data available.</p>
+                <% } %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <% users.forEach((user) => { %>
+    <!-- Modal for Edit Status -->
+    <div class="modal fade" id="editStatusModal<%= user.management_id %>" tabindex="-1" aria-labelledby="editStatusModalLabel<%= user.management_id %>" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editStatusModalLabel<%= user.management_id %>">Edit Status for <%= user.management_name %></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form action="/staff-details/<%= user.id_user %>" method="POST">
+            <input type="hidden" name="id_user" value="<%= user.id_user %>">
+            <input type="hidden" name="management_id" value="<%= user.management_id %>">
+            <div class="modal-body">
+              <label for="status<%= user.management_id %>" class="form-label">Status</label>
+              <select class="form-select" name="status" id="status<%= user.management_id %>" required>
+                <option value="active" <%= user.management_status === 'active' ? 'selected' : '' %>>Active</option>
+                <option value="blocked" <%= user.management_status === 'blocked' ? 'selected' : '' %>>Blocked</option>
+              </select>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  <% }) %>
+</body>
+
+<%- include('../layouts/footer') %>

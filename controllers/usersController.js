@@ -3,6 +3,8 @@ const { db } = require('../config/connect');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
+const { error } = require('winston');
+const { start } = require('@popperjs/core');
 
 require('dotenv').config();
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -30,6 +32,7 @@ class UsersController {
       res.render('register', { 
         roles,
         title : 'Register',
+        formData: req.body,
        });
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -38,14 +41,25 @@ class UsersController {
         return res.render('register',{ 
         roles,
         error: 'Error fetching users.',
-        title : 'Register', });
+        title : 'Register',
+        formData: req.body, });
       }
     }
 
   // Membuat pengguna baru
   static async createUser(req, res) {
     try {
-      const { nama_user, username, email, password, id_role } = req.body;
+      const { nama_user, username, email, password, confirm_password, id_role } = req.body;
+
+      // Validasi jika password dan confirm_password tidak cocok
+  if (password !== confirm_password) {
+    return res.render('register', {
+      error: 'Passwords do not match!',
+      roles: await UserModel.getRolesOnly(),
+      title : 'Register',
+      formData: req.body,
+    });
+  }
       
       // Validasi input
       if (!nama_user || !username || !email || !password || !id_role) {
@@ -122,7 +136,7 @@ class UsersController {
       const { token } = req.query;
 
       if (!token) {
-        console.error('Token is required.', error);
+        console.error('Token is required.');
         res.status(error.status || 400);
         return res.render('error', { error });
       }
@@ -132,7 +146,7 @@ class UsersController {
       const user = unverifiedUsers.find(user => user.email === decoded.email);  // Cari pengguna di array sementara
 
       if (!user) {
-        console.error('User not found or already verified:', error);
+        console.error('User not found or already verified:');
         res.status(error.status || 404);
         return res.render('error', { error });
       }
@@ -159,6 +173,27 @@ class UsersController {
       res.render('error', { error });
     }
   }
-}
+
+  static async editStatus(req, res) {
+    try {
+      // Ambil id_user dan status dari req.body
+      const { id_user, status } = req.body;
+
+      // Pastikan id_user ada di database
+        const user = await db('users').where({ id_user }).first();
+      
+      if (user) {
+        // Update status user
+        await db('users').where({ id_user : id_user }).update({ status });
+
+        return res.redirect('/admin-dashboard');
+
+      }
+    } catch (error) {
+      console.error('Error updating status:', error);
+      res.status(error.status || 500);
+      res.render('error', { error });
+  }
+}} 
 
 module.exports = UsersController;

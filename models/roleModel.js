@@ -27,7 +27,9 @@ class RoleModel {
   static async getAllRoles() {
     return db('roles').select('*');
   }
-
+  static async getRolesExceptSp(excludedRoles = [1,]) {
+    return db('roles').whereNotIn('id_role', excludedRoles);
+  }
   static async createRole(nama_role) {
     return db('roles').insert({ nama_role });
   }

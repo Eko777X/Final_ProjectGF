@@ -1,21 +1,19 @@
 <%- include('../layouts/header') %>
 
-<body class="hold-transition sidebar-mini">
+<body>
 
   <%- include('../layouts/navbar') %>
   
   <!-- Main Content -->
   <div class="wrapper">
 
-    <%- include('../layouts/sidebar') %>
 
     <!-- Content Wrapper. Contains page content -->
-    <div class="content-wrapper">
       <section class="content">
         <div class="container-fluid">
           <h1><%= title %></h1>
           <ul class="list-group">
-            <% roles.forEach(role => { %>
+            <% roleX.forEach(role => { %>
               <li class="list-group-item"><%= role.nama_role %></li>
             <% }) %>
           </ul>
@@ -31,7 +29,6 @@
         </div>
       </section>
     </div>
-  </div>
 </body>
 
   <%- include('../layouts/footer') %>

@@ -7,6 +7,10 @@ const authMiddleware = require('../middleware/validate');
 const dashboardController = require('../controllers/dashboardController');
 const multer = require('multer');
 const path = require('path');
+const { getErrorLogs } = require('../controllers/errorLogsController');
+
+
+
 
 
 // Konfigurasi Multer untuk unggahan file
@@ -22,6 +26,13 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+
+// Routes for edit status
+router.post('/edit-status', 
+  authMiddleware.authenticate,
+  authMiddleware.authorizeRole([1]),
+  UsersController.editStatus);
+
 // Routes for edit profile
 router.post('/edit-profile', 
   authMiddleware.authenticate,
@@ -33,6 +44,12 @@ router.get('/admin-dashboard',
    authMiddleware.authenticate, // Middleware autentikasi
    authMiddleware.authorizeRole([1]), // Hanya admin yang bisa mengakses
    dashboardController.adminDashboard);
+
+// Routes for error logs
+router.get('/error-logs', 
+  authMiddleware.authenticate, // Middleware autentikasi
+  authMiddleware.authorizeRole([1]), // Hanya admin yang bisa mengakses
+  getErrorLogs);
 
 // Routes for roles
 router.get(
@@ -47,6 +64,19 @@ router.get(
     authMiddleware.authorizeRole([1]), // Hanya admin
     RolesController.createRole
   );
+
+// Routes details staff
+router.get('/staff-details/:id',
+  authMiddleware.authenticate, // Middleware autentikasi
+  authMiddleware.authorizeRole([1]), // Hanya admin yang bisa mengakses
+  dashboardController.detailsStaff
+);
+router.post('/staff-details/:id',
+  authMiddleware.authenticate, // Middleware autentikasi
+  authMiddleware.authorizeRole([1]), // Hanya admin yang bisa mengakses
+  dashboardController.updateStatus
+);
+
 
 // Routes for users
 router.get('/register', UsersController.getAllUsers );
@@ -71,7 +101,7 @@ router.get(
     res.clearCookie("token"); // Hapus cookie 'token'
     res.redirect("/auth/login");  // Redirect ke halaman login
   });
-  
+
 
 module.exports = router;
 

@@ -33,7 +33,7 @@ const initDatabase = async () => {
     console.log('Memeriksa keberadaan tabel...');
 
     // Daftar tabel yang perlu diperiksa
-    const tablesToCheck = ['roles', 'users', 'users_management'];
+    const tablesToCheck = ['roles', 'users', 'users_management', 'error_logs'];
 
     // Pemeriksaan keberadaan masing-masing tabel dan migrasi satu per satu
     for (const tableName of tablesToCheck) {
@@ -82,6 +82,11 @@ const runMigrationForTable = async (db, tableName) => {
       console.log('Menjalankan migrasi untuk tabel "users_management"...');
       await db.migrate.rollback({ name: 'users_management' });
       await db.migrate.latest({ name: 'users_management' });
+      break;
+    case 'eror_logs':
+      console.log('Menjalankan migrasi untuk tabel "users_management"...');
+      await db.migrate.rollback({ name: 'error_logs' });
+      await db.migrate.latest({ name: 'error_logs' });
       break;
     default:
       console.log(`Migrasi untuk tabel "${tableName}" tidak ditemukan.`);

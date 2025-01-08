@@ -5,6 +5,7 @@ const routes = require('./routers');
 const authRoutes = require('./routers/auth');
 const cookieParser = require("cookie-parser");
 const { initDatabase } = require('./middleware/init');
+const logger = require('./config/logger');
 const app = express();
 
 (async () => {
@@ -27,6 +28,19 @@ app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 
 app.get('/', (req, res) => {
   res.render('index'); // Pastikan login.ejs ada di folder views
+});
+
+// Global error handler
+app.use((err, req, res, next) => {
+  // Log error dengan detail stack trace
+  logger.error('Unexpected error: ' + err.message, { stack_trace: err.stack });
+  const status = err.status || 500;
+  res.status(status).render('error', {
+    error: {
+      message: 'Internal Server Error',
+      status: status,
+    },
+  });
 });
 
 app.listen(appPort, () => {

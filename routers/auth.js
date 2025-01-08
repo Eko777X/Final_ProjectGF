@@ -36,8 +36,16 @@ router.post('/login', async (req, res) => {
         title : 'Login Page'
        });
     }
+    
     const user = usersTable || usersManagementTable;
 
+    // Cek status pengguna
+    if (user.status === 'blocked') {
+      return res.render('login', { 
+        error: 'Your account is suspended. Please contact support.',
+        title: 'Login Page'
+      });
+    }
     // Verifikasi password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {

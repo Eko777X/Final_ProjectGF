@@ -1,33 +1,148 @@
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid">
+    <!-- Brand -->
     <a class="navbar-brand" href="#">ParkSync</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <!-- Navbar Toggler -->
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
+      aria-controls="navbarNav"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
       <span class="navbar-toggler-icon"></span>
     </button>
+
+    <!-- Navbar Content -->
     <div class="collapse navbar-collapse" id="navbarNav">
+      <!-- Left Navigation (Based on Role) -->
       <ul class="navbar-nav me-auto">
         <% if (rol === 1) { %>
           <!-- For Admin (Role 1) -->
           <li class="nav-item">
-            <a class="nav-link active" href="/admin-dashboard">Dashboard</a>
+            <a class="nav-link" href="/admin-dashboard">Dashboard</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/roles">Add Roles</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/error-logs">Error Logs</a>
+          </li>
         <% } else { %>
           <!-- For User (Other roles) -->
           <li class="nav-item">
-            <a class="nav-link active" href="/user-dashboard">Dashboard</a>
+            <a class="nav-link" href="/user-dashboard">Dashboard</a>
           </li>
         <% } %>
       </ul>
-      <!-- Logout Button (Aligned to the right) -->
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-          <a href="/logout" class="btn btn-outline-danger">Logout</a>
+
+      <!-- User Profile & Logout -->
+      <ul class="navbar-nav ms-auto align-items-center">
+        <!-- Profile Section -->
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            id="userDropdown"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <img
+              src="<%= profile_image ? '/uploads/' + profile_image : '/uploads/default.jpg' %>"
+              class="rounded-circle"
+              alt="User Image"
+              style="width: 30px; height: 30px; object-fit: cover;"
+            />
+            <span class="ms-2"><%= name %></span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+            <li>
+              <a
+                class="dropdown-item"
+                href="#"
+                data-bs-toggle="modal"
+                data-bs-target="#editProfileModal"
+              >Edit Profile</a>
+            </li>
+            <li><hr class="dropdown-divider" /></li>
+            <li>
+              <a class="dropdown-item text-danger" href="/logout">Logout</a>
+            </li>
+          </ul>
         </li>
       </ul>
     </div>
   </div>
 </nav>
+
+<!-- Modal Edit Profile -->
+<div
+  class="modal fade"
+  id="editProfileModal"
+  tabindex="-1"
+  aria-labelledby="editProfileModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <!-- Modal Body -->
+      <div class="modal-body">
+        <!-- Form to Edit Profile -->
+        <form action="/edit-profile" method="POST" enctype="multipart/form-data">
+          <!-- Name -->
+          <div class="mb-3">
+            <label for="nama_user" class="form-label">Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="nama_user"
+              name="nama_user"
+              value="<%= name %>"
+              required
+            />
+          </div>
+
+          <!-- Password -->
+          <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input
+              type="password"
+              class="form-control"
+              id="password"
+              name="password"
+              placeholder="Leave blank to keep current password"
+            />
+          </div>
+
+          <!-- Profile Image -->
+          <div class="mb-3">
+            <label for="profile_image" class="form-label">Profile Image</label>
+            <input
+              type="file"
+              class="form-control"
+              id="profile_image"
+              name="profile_image"
+            />
+          </div>
+
+          <!-- Save Button -->
+          <button type="submit" class="btn btn-primary w-100">Save Changes</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

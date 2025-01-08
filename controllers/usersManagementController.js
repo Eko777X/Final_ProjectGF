@@ -14,7 +14,8 @@ class UsersManagementController {
         usersManagement, 
         id_user,
         roles,
-        title: 'Staff Management', });
+        title: 'Staff Management',
+        profile_image: req.user.profile_image || 'default.jpg', });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }

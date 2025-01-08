@@ -1,0 +1,133 @@
+<%- include('./layouts/header') %>
+<body class="hold-transition sidebar-mini">
+  <%- include('./layouts/navbar') %>
+
+  <!-- Main Content -->
+  <div class="wrapper d-flex flex-column min-vh-100">
+
+    <!-- Content Wrapper. Contains page content -->
+    <section class="content flex-grow-1">
+      <div class="container-fluid">
+        <h1 class="text-center mt-4">Error Logs</h1>
+        <p class="text-muted text-center">View and manage system errors in real time</p>
+
+        <!-- Search Bar -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <input
+            type="text"
+            id="logSearch"
+            class="form-control"
+            placeholder="Search Error Logs..."
+            onkeyup="filterTable()"
+            style="width: 300px;"
+          />
+        </div>
+
+        <!-- Table to display error logs -->
+        <div class="table-responsive mt-4">
+          <table class="table table-hover table-bordered align-middle" id="logTable">
+            <thead class="table-dark">
+              <tr>
+                <th>#</th>
+                <th>Level</th>
+                <th>Message</th>
+                <th>Timestamp</th>
+                <th>Stack Trace</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (errorLogs && errorLogs.length > 0) { %>
+                <% errorLogs.forEach((log, index) => { %>
+                  <tr>
+                    <td><%= (currentPage - 1) * limit + index + 1 %></td>
+                    <td>
+                      <span class="badge bg-<%= log.level === 'error' ? 'danger' : log.level === 'warn' ? 'warning' : 'info' %>">
+                        <%= log.level.charAt(0).toUpperCase() + log.level.slice(1) %>
+                      </span>
+                    </td>
+                    <td><%= log.message %></td>
+                    <td><%= new Date(log.timestamp).toLocaleString() %></td>
+                    <td>
+                      <% if (log.stack_trace) { %>
+                        <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#stackTrace<%= index %>" aria-expanded="false" aria-controls="stackTrace<%= index %>">
+                          View
+                        </button>
+                        <div class="collapse mt-2" id="stackTrace<%= index %>">
+                          <pre class="bg-light p-2 rounded"><%= log.stack_trace %></pre>
+                        </div>
+                      <% } else { %>
+                        <em class="text-muted">No Stack Trace</em>
+                      <% } %>
+                    </td>
+                    <td>
+                      <div class="d-flex justify-content-start">
+                        <form action="/error-logs/delete/<%= log.id %>" method="POST" onsubmit="return confirm('Are you sure you want to delete this log?')">
+                          <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                <% }) %>
+              <% } else { %>
+                <tr>
+                  <td colspan="6" class="text-center">No error logs found</td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <nav aria-label="Page navigation">
+          <ul class="pagination justify-content-center mt-4">
+            <% if (currentPage > 1) { %>
+              <li class="page-item">
+                <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                </a>
+              </li>
+            <% } %>
+            <% for (let i = 1; i <= totalPages; i++) { %>
+              <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+              </li>
+            <% } %>
+            <% if (currentPage < totalPages) { %>
+              <li class="page-item">
+                <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                </a>
+              </li>
+            <% } %>
+          </ul>
+        </nav>
+      </div>
+    </section>
+
+  <script>
+    // Search functionality for table
+    function filterTable() {
+      const input = document.getElementById("logSearch");
+      const filter = input.value.toLowerCase();
+      const table = document.getElementById("logTable");
+      const rows = table.getElementsByTagName("tr");
+
+      for (let i = 1; i < rows.length; i++) {
+        const cells = rows[i].getElementsByTagName("td");
+        let match = false;
+
+        for (let j = 0; j < cells.length - 1; j++) {
+          if (cells[j].innerText.toLowerCase().includes(filter)) {
+            match = true;
+            break;
+          }
+        }
+
+        rows[i].style.display = match ? "" : "none";
+      }
+    }
+  </script>
+</body>
+
+<%- include('./layouts/footer') %>
