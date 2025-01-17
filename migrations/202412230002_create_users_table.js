@@ -9,12 +9,7 @@ exports.up = async function (knex) {
     table.string('email').notNullable();
     table.string('password').notNullable();
     table.string('status').notNullable().defaultTo('active');
-    table
-      .integer('id_role')
-      .unsigned()
-      .references('id_role')
-      .inTable('roles')
-      .onDelete('CASCADE');
+    table.integer('id_role').unsigned().references('id_role').inTable('roles').onDelete('CASCADE');
     table.string('profile_image').nullable();
     table.timestamps(true, true);
   });

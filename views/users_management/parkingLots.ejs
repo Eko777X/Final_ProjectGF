@@ -1,0 +1,182 @@
+<%- include('../layouts/header') %>
+
+<body class="hold-transition sidebar-mini">
+  <%- include('../layouts/navbar') %>
+
+  <div class="wrapper">
+    <section class="content py-2 flex-grow-1">
+      <div class="container-fluid">
+        <h1 class="text-center mt-2">Parking Lot Management</h1>
+        <p class="text-muted text-center mb-4">Manage Parking Lots</p>
+
+        <!-- Search Bar -->
+        <div class="d-flex justify-content-end mb-4">
+          <input
+            type="text"
+            id="lotSearch"
+            class="form-control"
+            placeholder="Search Parking Lots..."
+            onkeyup="filterTable()"
+            style="width: 300px;"
+          />
+        </div>
+
+        <!-- Parking Lots Table -->
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover table-striped" id="lotTable">
+            <thead class="table-light">
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Image</th>
+                <th>Latitude</th>
+                <th>Longitude</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+                <% if (lots && lots.length > 0) { %>
+                    <% lots.forEach((lot, index) => { %>
+                      <tr>
+                        <td><%= index + 1 %></td>
+                        <td><%= lot.nama_lot %></td>
+                        <td>
+                          <% if (lot.lot_image) { %>
+                            <img
+                              src="/uploads/<%= lot.lot_image %>"
+                              alt="Lot Image"
+                              class="rounded-circle"
+                              style="width: 50px; height: 50px; object-fit: cover; cursor: pointer;"
+                              onclick="showImageModal('/uploads/<%= lot.lot_image %>')"
+                            />
+                          <% } else { %>
+                            <span class="text-muted">No Image</span>
+                          <% } %>
+                        </td>
+                        <td><%= lot.latitude %></td>
+                        <td><%= lot.longitude %></td>
+                        <td>
+                          <span class="<%= lot.status_lot === 'active' ? 'badge bg-success' : 'badge bg-danger' %>">
+                            <%= lot.status_lot %>
+                          </span>
+                        </td>
+                        <td>
+                          <a href="/aset" class="btn btn-warning btn-sm">Edit</a>
+                          <a href="/aset" class="btn btn-danger btn-sm">Delete</a>
+                        </td>
+                      </tr>
+                    <% }); %>
+                  <% } else { %>
+                    <tr>
+                      <td colspan="7" class="text-center">No parking lots available</td>
+                    </tr>
+                  <% } %>
+                  
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Add New Lot Button -->
+        <div class="mb-3 text-end">
+          <a href="#createLotModal" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createLotModal">Add New Lot</a>
+        </div>
+
+        <!-- Modal to Add Lot -->
+        <div class="modal fade" id="createLotModal" tabindex="-1" aria-labelledby="createLotModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="createLotModalLabel">Create Parking Lot</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <form action="/parking" method="POST" enctype="multipart/form-data">
+                <div class="modal-body">
+                  <div class="mb-3">
+                    <label for="nama_lot" class="form-label">Parking Lot Name</label>
+                    <input type="text" class="form-control" id="nama_lot" name="nama_lot" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="lot_image" class="form-label">Lot Image</label>
+                    <input
+                      type="file"
+                      class="form-control"
+                      id="lot_image"
+                      name="lot_image"
+                      accept="image/*"
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label for="latitude" class="form-label">Latitude</label>
+                    <input type="number" step="0.000001" class="form-control" id="latitude" name="latitude" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="longitude" class="form-label">Longitude</label>
+                    <input type="number" step="0.000001" class="form-control" id="longitude" name="longitude" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="status_lot" class="form-label">Status</label>
+                    <select class="form-select" id="status_lot" name="status_lot" required>
+                      <option value="active">Active</option>
+                      <option value="inactive">Inactive</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Create Parking Lot</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+<!-- Modal untuk Menampilkan Gambar Besar -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-center">
+          <img id="modalImage" src="" alt="Lot Image" class="img-fluid" style="max-height: 500px;">
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    function filterTable() {
+      const input = document.getElementById("lotSearch");
+      const filter = input.value.toLowerCase();
+      const table = document.getElementById("lotTable");
+      const rows = table.getElementsByTagName("tr");
+
+      for (let i = 1; i < rows.length; i++) {
+        const cells = rows[i].getElementsByTagName("td");
+        let match = false;
+
+        for (let j = 0; j < cells.length; j++) {
+          if (cells[j].innerText.toLowerCase().includes(filter)) {
+            match = true;
+            break;
+          }
+        }
+
+        rows[i].style.display = match ? "" : "none";
+      }
+    }
+  </script>
+  <script>
+    // Fungsi untuk menampilkan modal dengan gambar
+    function showImageModal(imageUrl) {
+      const modalImage = document.getElementById('modalImage');
+      modalImage.src = imageUrl; // Set URL gambar ke modal
+      const imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
+      imageModal.show(); // Tampilkan modal
+    }
+  </script>
+</body>
+
+<%- include('../layouts/footer') %>

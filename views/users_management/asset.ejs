@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Under Construction</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #f39c12, #e67e22);
+      color: white;
+      font-family: 'Arial', sans-serif;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .construction-wrapper {
+      text-align: center;
+    }
+
+    .construction-wrapper h1 {
+      font-size: 3rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+
+    .construction-wrapper p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+    }
+
+    .construction-image img {
+      width: 300px;
+      max-width: 100%;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-20px);
+      }
+      60% {
+        transform: translateY(-10px);
+      }
+    }
+
+    .back-home-btn {
+      margin-top: 2rem;
+      padding: 0.7rem 1.5rem;
+      font-size: 1rem;
+      font-weight: bold;
+      background-color: white;
+      color: #e67e22;
+      border: none;
+      border-radius: 25px;
+      transition: all 0.3s ease;
+    }
+
+    .back-home-btn:hover {
+      background-color: #e67e22;
+      color: white;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="construction-wrapper">
+    <h1>Under Construction</h1>
+    <p>This page is currently under construction. Please check back later.</p>
+    <button class="back-home-btn" onclick="window.location.href='/'">Back to Home</button>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

@@ -1,35 +1,58 @@
 <%- include('../layouts/header') %>
 
 <body>
-
   <%- include('../layouts/navbar') %>
-  
+
   <!-- Main Content -->
   <div class="wrapper">
 
-
     <!-- Content Wrapper. Contains page content -->
-      <section class="content">
-        <div class="container-fluid">
-          <h1><%= title %></h1>
-          <ul class="list-group">
-            <% roleX.forEach(role => { %>
-              <li class="list-group-item"><%= role.nama_role %></li>
-            <% }) %>
-          </ul>
-
-          <!-- Form to create new role -->
-          <form action="/roles" method="POST" class="mt-4">
-            <div class="mb-3">
-              <label for="nama_role" class="form-label">Role Name:</label>
-              <input type="text" name="nama_role" id="nama_role" class="form-control" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Create Role</button>
-          </form>
+    <section class="content py-5">
+      <div class="container">
+        <div class="text-center mb-5">
+          <h1 class="display-5 fw-bold">Manage Roles</h1>
+          <p class="text-muted">Create and manage user roles effectively.</p>
         </div>
-      </section>
-    </div>
-</body>
+
+        <!-- Role List -->
+        <div class="card shadow-sm mb-4">
+          <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Existing Roles</h5>
+          </div>
+          <div class="card-body">
+            <% if (roleX && roleX.length > 0) { %>
+              <ul class="list-group">
+                <% roleX.forEach(role => { %>
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <%= role.nama_role %>
+                    <span class="badge bg-secondary rounded-pill">Role</span>
+                  </li>
+                <% }) %>
+              </ul>
+            <% } else { %>
+              <p class="text-center text-muted">No roles available yet.</p>
+            <% } %>
+          </div>
+        </div>
+
+        <!-- Form to Create a New Role -->
+        <div class="card shadow-sm">
+          <div class="card-header bg-success text-white">
+            <h5 class="mb-0">Add New Role</h5>
+          </div>
+          <div class="card-body">
+            <form action="/roles" method="POST">
+              <div class="mb-3">
+                <label for="nama_role" class="form-label">Role Name</label>
+                <input type="text" name="nama_role" id="nama_role" class="form-control" placeholder="Enter role name" required>
+              </div>
+              <button type="submit" class="btn btn-success w-100">Create Role</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
 
   <%- include('../layouts/footer') %>
-  
+</body>

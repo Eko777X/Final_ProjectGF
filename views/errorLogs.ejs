@@ -1,5 +1,5 @@
 <%- include('./layouts/header') %>
-<body class="hold-transition sidebar-mini">
+<body>
   <%- include('./layouts/navbar') %>
 
   <!-- Main Content -->
@@ -62,7 +62,8 @@
                     </td>
                     <td>
                       <div class="d-flex justify-content-start">
-                        <form action="/error-logs/delete/<%= log.id %>" method="POST" onsubmit="return confirm('Are you sure you want to delete this log?')">
+                        <form action="/error-logs" method="POST" onsubmit="return confirm('Are you sure you want to delete this log?')">
+                          <input type="hidden" name="id" value="<%= log.id %>">
                           <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                         </form>
                       </div>
@@ -104,7 +105,7 @@
         </nav>
       </div>
     </section>
-
+  </div>
   <script>
     // Search functionality for table
     function filterTable() {

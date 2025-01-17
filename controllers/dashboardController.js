@@ -31,15 +31,15 @@ class DashboardController {
       // Render halaman admin dengan data pengguna
       return res.render('admin/index', {
         users,
-        title: 'Users Data',
+        title: 'SuperAdmin Dashboard',
         rol: req.user.role,
         name: req.user.name,
         profile_image: req.user.profile_image || 'default.jpg',
       });
       
-    } catch (error) {
-      console.error('Error fetching users:', error);
-      return res.status(500).send('Error fetching users');
+    } catch (err) {
+      // Tangani error dan lempar ke global error handler
+      next(err);
     }
   }
 
@@ -61,9 +61,9 @@ class DashboardController {
           ); // Sesuaikan kolom yang dibutuhkan
         // Render halaman user dengan data pengguna
         return res.render('user_management/index', { user });
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-        return res.status(500).send('Error fetching user data');
+      } catch (err) {
+        // Tangani error dan lempar ke global error handler
+        next(err);
       }
     } else {
       return res.redirect('/admin-dashboard');
@@ -110,7 +110,14 @@ class DashboardController {
       // Simpan perubahan ke database
       await db('users').where({ id_user: id }).update(updates);
 
-      res.redirect('/admin-dashboard');
+      if (req.user.role === 1) {
+        // Jika id_role = 1 (superadmin), redirect ke admin-dashboard
+        return res.redirect('/admin-dashboard');
+      }
+  
+      // Jika bukan superadmin, redirect ke halaman profil atau halaman lain yang sesuai
+      return res.redirect('/user-management');
+
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'An error occurred while updating the profile' });
@@ -157,9 +164,9 @@ class DashboardController {
         name: req.user.name,
         profile_image: req.user.profile_image || 'default.jpg',
        });
-    } catch (error) {
-      console.error(error);
-      res.status(500).send('Server Error');
+    } catch (err) {
+      // Tangani error dan lempar ke global error handler
+      next(err);
     }
   }
 
@@ -178,9 +185,9 @@ class DashboardController {
 
       // Redirect ke halaman staff details setelah update status
       return res.redirect(`/staff-details/${id_user}`);
-    } catch (error) {
-      console.error('Error updating status:', error);
-      res.status(500).send('An error occurred while updating the status');
+    } catch (err) {
+      // Tangani error dan lempar ke global error handler
+      next(err);
     }
   }
 

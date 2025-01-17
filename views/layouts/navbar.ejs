@@ -31,10 +31,22 @@
           <li class="nav-item">
             <a class="nav-link" href="/error-logs">Error Logs</a>
           </li>
-        <% } else { %>
+        <% } else if (rol === 2 || 3) { %>
           <!-- For User (Other roles) -->
           <li class="nav-item">
-            <a class="nav-link" href="/user-dashboard">Dashboard</a>
+            <a class="nav-link" href="/aset">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/user-management">Manage Staff</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/parking">Manage Lots</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/aset">Manage Asset</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/aset">Report</a>
           </li>
         <% } %>
       </ul>

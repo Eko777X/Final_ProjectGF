@@ -50,16 +50,6 @@ class UsersController {
   static async createUser(req, res) {
     try {
       const { nama_user, username, email, password, confirm_password, id_role } = req.body;
-
-      // Validasi jika password dan confirm_password tidak cocok
-  if (password !== confirm_password) {
-    return res.render('register', {
-      error: 'Passwords do not match!',
-      roles: await UserModel.getRolesOnly(),
-      title : 'Register',
-      formData: req.body,
-    });
-  }
       
       // Validasi input
       if (!nama_user || !username || !email || !password || !id_role) {
@@ -123,10 +113,9 @@ class UsersController {
         console.log('Verification email sent:', info.response);
         res.status(201).json({ message: 'User registered successfully. Verification email sent.' });
       });
-    } catch (error) {
-      console.error('Error creating user:', error);
-      res.status(error.status || 500);
-      return res.render('error', {error});
+    } catch (err) {
+      // Tangani error dan lempar ke global error handler
+      next(err);
     }
   }
 
@@ -167,10 +156,9 @@ class UsersController {
       unverifiedUsers.splice(unverifiedUsers.indexOf(user), 1);
 
       res.render('emailVerified',{title : 'Email Verified'});
-    } catch (error) {
-      console.error('Error verifying email:', error);
-      res.status(error.status || 500);
-      res.render('error', { error });
+    } catch (err) {
+      // Tangani error dan lempar ke global error handler
+      next(err);
     }
   }
 
@@ -189,10 +177,9 @@ class UsersController {
         return res.redirect('/admin-dashboard');
 
       }
-    } catch (error) {
-      console.error('Error updating status:', error);
-      res.status(error.status || 500);
-      res.render('error', { error });
+    } catch (err) {
+      // Tangani error dan lempar ke global error handler
+      next(err);
   }
 }} 
 

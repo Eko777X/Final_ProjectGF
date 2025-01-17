@@ -1,0 +1,156 @@
+<%- include('../layouts/header') %>
+
+<body class="hold-transition sidebar-mini">
+  <%- include('../layouts/navbar') %>
+
+  <!-- Main Wrapper -->
+  <div class="wrapper">
+    <!-- Main Content -->
+    <section class="content py-2 flex-grow-1">
+      <div class="container-fluid">
+        <h1 class="text-center mt-2"><%= title %></h1>
+        <p class="text-muted text-center mb-4">View and manage staff accounts</p>
+
+        <!-- Search Bar -->
+        <div class="d-flex justify-content-end mb-4">
+          <input
+            type="text"
+            id="userSearch"
+            class="form-control"
+            placeholder="Search Users..."
+            onkeyup="filterTable()"
+            style="width: 300px;"
+          />
+        </div>
+
+        <!-- Display User Data -->
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover table-striped" id="userTable">
+            <thead class="table-light">
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Account Status</th>
+                <th>Employee Status</th>
+                <th>Positioning</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (users && users.length > 0) { %>
+                <% users.forEach((user, index) => { %>
+                  <tr>
+                    <td><%= index + 1 %></td>
+                    <td><%= user.nama_user %></td>
+                    <td><%= user.username %></td>
+                    <td><%= user.email %></td>
+                    <td>
+                      <span class="<%= user.status === 'active' ? 'badge bg-success' : 'badge bg-danger' %>">
+                        <%= user.status %>
+                      </span>
+                    </td>
+                    <td>
+                      <span class="badge bg-success">
+                        Join
+                      </span>
+                    </td>
+                    <td><%= user.nama_role %></td>
+                    <td>
+                      <a href="/aset" class="btn btn-warning btn-sm">Edit</a>
+                     
+                    </td>
+                  </tr>
+                <% }); %>
+              <% } else { %>
+                <tr>
+                  <td colspan="7" class="text-center">No data available</td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Add New User Button -->
+        <div class="mb-3 text-end">
+          <a href="#createUserModal" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createUserModal">Create New User</a>
+        </div>
+
+        <!-- Modal to Add User -->
+        <div class="modal fade" id="createUserModal" tabindex="-1" aria-labelledby="createUserModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="createUserModalLabel">Create User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <form action="/user-management" method="POST">
+                <div class="modal-body">
+                  <div class="mb-3">
+                    <label for="nama_user" class="form-label">Nama User</label>
+                    <input type="text" class="form-control" id="nama_user" name="nama_user" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="username" name="username" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="id_role" class="form-label">Role</label>
+                    <select class="form-select" id="id_role" name="id_role" required>
+                      <option value="">Select Role</option>
+                      <% roles.forEach(role => { %>
+                        <option value="<%= role.id_role %>"><%= role.nama_role %></option>
+                      <% }); %>
+                    </select>
+                  </div>
+                  <input type="hidden" id="id_user" name="id_user" value="<%= id_user %>">
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Create User</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // Search Functionality for Table
+    function filterTable() {
+      const input = document.getElementById("userSearch");
+      const filter = input.value.toLowerCase();
+      const table = document.getElementById("userTable");
+      const rows = table.getElementsByTagName("tr");
+
+      for (let i = 1; i < rows.length; i++) {
+        const cells = rows[i].getElementsByTagName("td");
+        let match = false;
+
+        for (let j = 0; j < cells.length; j++) {
+          if (cells[j].innerText.toLowerCase().includes(filter)) {
+            match = true;
+            break;
+          }
+        }
+
+        rows[i].style.display = match ? "" : "none";
+      }
+    }
+  </script>
+
+</body>
+
+<%- include('../layouts/footer') %>

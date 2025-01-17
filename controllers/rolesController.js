@@ -13,9 +13,9 @@ class RolesController {
         roles: roles,
         roleX,
         profile_image: req.user.profile_image || 'default.jpg',});
-    } catch (error) {
-      res.status(error.status || 500 );
-      return res.render('error', { error });
+    } catch (err) {
+      // Tangani error dan lempar ke global error handler
+      next(err);
     }
   }
 
@@ -24,9 +24,9 @@ class RolesController {
       const { nama_role } = req.body;
       await RoleModel.createRole(nama_role);
       res.redirect('/roles');
-    } catch (error) {
-      res.status(error.status || 500 );
-      return res.render('error', { error });
+    } catch (err) {
+      // Tangani error dan lempar ke global error handler
+      next(err);
     }
   }
 }
